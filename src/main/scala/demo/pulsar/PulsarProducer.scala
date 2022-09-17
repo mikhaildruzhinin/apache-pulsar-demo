@@ -14,14 +14,13 @@ object PulsarProducer extends BasePulsarApp {
   private val executor: ExecutorService = Executors.newFixedThreadPool(4)
   private implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executor)
 
-  private val eventProducer = pulsarClient.producer[SensorEvent](
-    ProducerConfig(
-      topic = topic,
-      producerName = Some(producerName),
-      enableBatching = Some(true),
-      blockIfQueueFull = Some(true)
-    )
+  private val producerConfig: ProducerConfig = ProducerConfig(
+    topic = topic,
+    producerName = Some(producerName),
+    enableBatching = Some(true),
+    blockIfQueueFull = Some(true)
   )
+  private val eventProducer = pulsarClient.producer[SensorEvent](producerConfig)
 
   def main(args: Array[String]): Unit = {
     SensorDomain.generate().take(100).foreach { sensorEvent =>
