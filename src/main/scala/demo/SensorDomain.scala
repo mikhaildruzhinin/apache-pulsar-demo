@@ -4,12 +4,6 @@ import java.util.UUID
 import scala.util.Random
 
 object SensorDomain {
-  case class SensorEvent(sensorId: String,
-                         status: String,
-                         startupTime: Long,
-                         eventTime: Long,
-                         reading: Double)
-
   private val startupTime: Long = System.currentTimeMillis()
 
   private val sensorIds: List[String] = (1 to 10).map(_ => UUID.randomUUID().toString).toList
