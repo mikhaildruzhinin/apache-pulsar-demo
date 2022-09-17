@@ -25,7 +25,7 @@ object SensorDomain {
     val index = Random.nextInt(sensorIds.size)
     val sensorId = sensorIds(index)
     val reading = if (offSensors.contains(sensorId)) {
-      println(s"starting sensor $index")
+      println(s"Starting sensor ${index + 1}")
       SensorEvent(sensorId, "Starting", startupTime, System.currentTimeMillis(), 0.0)
     } else {
       val temperature = generateRandomReading()
