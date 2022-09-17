@@ -1,4 +1,4 @@
-package demo
+package demo.sensor
 
 import java.util.UUID
 import scala.util.Random

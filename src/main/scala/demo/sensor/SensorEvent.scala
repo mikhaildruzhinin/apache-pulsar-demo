@@ -1,4 +1,4 @@
-package demo
+package demo.sensor
 
 case class SensorEvent(sensorId: String,
                        status: String,
