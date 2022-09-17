@@ -1,37 +1,38 @@
 package demo.sensor
 
-import java.util.UUID
-import scala.util.Random
+import java.lang.management.{ManagementFactory, OperatingSystemMXBean}
+import java.lang.reflect.Method
+import java.net.InetAddress
 
 object SensorDomain {
   private val startupTime: Long = System.currentTimeMillis()
 
-  private val sensorIds: List[String] = (1 to 10).map(_ => UUID.randomUUID().toString).toList
+  private val sensorId = InetAddress.getLocalHost.getHostName
 
-  private val offSensors: Set[String] = sensorIds.toSet
-  private val onSensors: Set[String] = Set[String]()
+  private val operatingSystemMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean
 
-  private def generateRandomReading(): Double = {
-    BigDecimal(40 + Random.nextGaussian()).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+  private def getReading(methodName: String): String = {
+    val method: Method = operatingSystemMXBean.getClass.getDeclaredMethod(methodName)
+    method.setAccessible(true)
+    try {
+      method.invoke(operatingSystemMXBean).toString
+    } catch {
+      case _: Exception => "-1"
+    }
   }
 
-  // Stopped -> Starting -> Running
-  def generate(ids: List[String] = sensorIds,
-               offSensors: Set[String] = offSensors,
-               onSensors: Set[String] = onSensors): Iterator[SensorEvent] = {
+  def generate(): Iterator[SensorEvent] = {
+    Thread.sleep(1000)
 
-    Thread.sleep(Random.nextInt(500) + 200)
+    val sensorEvent = SensorEvent(
+      sensorId = sensorId,
+      startupTime = startupTime,
+      eventTime = System.currentTimeMillis(),
+      freePhysicalMemorySize = getReading("getFreePhysicalMemorySize"),
+      freeSwapSpaceSize = getReading("getFreeSwapSpaceSize"),
+      systemCpuLoad = getReading("getSystemCpuLoad")
+    )
 
-    val index = Random.nextInt(sensorIds.size)
-    val sensorId = sensorIds(index)
-    val reading = if (offSensors.contains(sensorId)) {
-      println(s"Starting sensor ${index + 1}")
-      SensorEvent(sensorId, "Starting", startupTime, System.currentTimeMillis(), 0.0)
-    } else {
-      val temperature = generateRandomReading()
-      SensorEvent(sensorId, "Running", startupTime, System.currentTimeMillis(), temperature)
-    }
-
-    Iterator.single(reading) ++ generate(ids, offSensors - sensorId, onSensors + sensorId)
+    Iterator.single(sensorEvent) ++ generate()
   }
 }
