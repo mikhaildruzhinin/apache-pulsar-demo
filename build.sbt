@@ -17,7 +17,10 @@ val pulsar4sVersion = "2.7.3"
 
 lazy val pulsar4s       = "com.sksamuel.pulsar4s" %% "pulsar4s-core"  % pulsar4sVersion
 lazy val pulsar4sCirce  = "com.sksamuel.pulsar4s" %% "pulsar4s-circe" % pulsar4sVersion
+lazy val typesafeConfig = "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies ++= Seq(
-  pulsar4s, pulsar4sCirce
+  pulsar4s,
+  pulsar4sCirce,
+  typesafeConfig
 )
