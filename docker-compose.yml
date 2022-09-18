@@ -9,3 +9,20 @@ services:
       - 6650:6650
       - 8080:8080
     command: bin/pulsar standalone
+  consumer:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: consumer
+    depends_on:
+      - pulsar
+    command: sbt "runMain demo.pulsar.PulsarConsumer"
+  producer:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: producer
+    depends_on:
+      - pulsar
+      - consumer
+    command: sbt "runMain demo.pulsar.PulsarProducer"
