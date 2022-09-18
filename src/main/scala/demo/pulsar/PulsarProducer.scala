@@ -23,7 +23,7 @@ object PulsarProducer extends BasePulsarApp {
   private val eventProducer = pulsarClient.producer[SensorEvent](producerConfig)
 
   def main(args: Array[String]): Unit = {
-    SensorDomain.generate().take(100).foreach { sensorEvent =>
+    SensorDomain.generate().foreach { sensorEvent =>
       val message = DefaultProducerMessage(
         key = Some(sensorEvent.sensorId),
         value = sensorEvent,
